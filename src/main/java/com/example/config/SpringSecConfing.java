@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.websocket.Session;
 import java.security.AuthProvider;
@@ -29,12 +30,12 @@ public class SpringSecConfing {
     private MyUserDetailsService userDetailsService;
 
 
-
     //! so we are basically cofinguring our security chain here like the number of factors we are taking into consideration here are as following
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(Customizer -> Customizer.disable()).authorizeHttpRequests(Request -> Request.anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).sessionManagement(Session -> Session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
+                .csrf(Customizer -> Customizer.disable()).authorizeHttpRequests(request -> request.antMatchers("/register", "/login").permitAll().
+                        anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).sessionManagement(Session -> Session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
 
         //? well again we can use httprequest.formlogin(Customizer.withDeafaults()); to implement the form login security via broweser login if we are authenticating using browser
     }
@@ -43,10 +44,10 @@ public class SpringSecConfing {
     //! now will do same changes for authantication provider like the user to be authanticated
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+//        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
