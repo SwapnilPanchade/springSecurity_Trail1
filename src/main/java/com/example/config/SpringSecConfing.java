@@ -34,7 +34,7 @@ public class SpringSecConfing {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(Customizer -> Customizer.disable()).authorizeHttpRequests(request -> request.antMatchers("/register", "/login").permitAll().
+                .csrf(Customizer -> Customizer.disable()).authorizeHttpRequests(request -> request.antMatchers("/register").permitAll().
                         anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).sessionManagement(Session -> Session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
 
         //? well again we can use httprequest.formlogin(Customizer.withDeafaults()); to implement the form login security via broweser login if we are authenticating using browser
